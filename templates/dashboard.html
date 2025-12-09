@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel de Control - LFSH | TRON Style</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- Fuentes TRON -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        :root {
+            --tron-blue: #00f3ff;
+            --tron-orange: #ff7a00;
+            --tron-white: #ffffff;
+            --tron-dark: #0a0a1a;
+            --tron-grid: #003344;
+            --tron-gray: #1a2332;
+        }
+
+        body {
+            background-color: var(--tron-dark);
+            background-image:
+                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            color: var(--tron-white);
+            font-family: 'Rajdhani', sans-serif;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(0, 51, 68, 0.4) 0%, transparent 50%),
+                       radial-gradient(circle at 80% 20%, rgba(255, 122, 0, 0.2) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .tron-font {
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .tron-header {
+            background: rgba(10, 10, 26, 0.95);
+            border-bottom: 2px solid var(--tron-blue);
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.4);
+            padding: 1.5rem 0;
+            margin-bottom: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .tron-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--tron-blue), transparent);
+            animation: scan 4s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .tron-title {
+            color: var(--tron-blue);
+            text-shadow: 0 0 15px rgba(0, 243, 255, 0.8);
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+        }
+
+        .tron-subtitle {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 1.1rem;
+        }
+
+        .tron-btn {
+            font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(45deg, rgba(26, 35, 50, 0.9), rgba(10, 10, 26, 0.9));
+            color: var(--tron-orange);
+            border: 1px solid var(--tron-orange);
+            border-radius: 6px;
+            padding: 0.6rem 1.8rem;
+            text-decoration: none;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(255, 122, 0, 0.3);
+        }
+
+        .tron-btn:hover {
+            background: var(--tron-orange);
+            color: var(--tron-dark);
+            box-shadow: 0 0 25px rgba(255, 122, 0, 0.7);
+            transform: translateY(-3px);
+        }
+
+        .tron-card {
+            background: rgba(26, 35, 50, 0.85);
+            border: 1px solid var(--tron-blue);
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.25);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+
+        .tron-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 35px rgba(0, 243, 255, 0.35);
+        }
+
+        .tron-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--tron-blue), var(--tron-orange));
+        }
+
+        .api-key-display {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid var(--tron-blue);
+            border-radius: 8px;
+            color: var(--tron-blue);
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            word-break: break-all;
+            text-shadow: 0 0 8px rgba(0, 243, 255, 0.7);
+            letter-spacing: 1.5px;
+        }
+
+        .btn-copy-tron {
+            font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(45deg, rgba(0, 51, 68, 0.8), rgba(0, 102, 136, 0.8));
+            color: var(--tron-white);
+            border: 1px solid var(--tron-blue);
+            border-radius: 6px;
+            padding: 0.7rem 2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+        }
+
+        .btn-copy-tron:hover {
+            background: var(--tron-blue);
+            color: var(--tron-dark);
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.7);
+            transform: translateY(-3px);
+        }
+
+        .endpoint-item {
+            background: rgba(26, 35, 50, 0.8);
+            border-left: 5px solid;
+            border-radius: 8px;
+            padding: 1.8rem;
+            margin-bottom: 1.8rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border-top: 1px solid rgba(0, 243, 255, 0.1);
+            border-right: 1px solid rgba(0, 243, 255, 0.1);
+            border-bottom: 1px solid rgba(0, 243, 255, 0.1);
+        }
+
+        .endpoint-item:hover {
+            transform: translateX(8px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        .endpoint-item.post { border-left-color: #00ff88; }
+        .endpoint-item.get { border-left-color: #0088ff; }
+        .endpoint-item.put { border-left-color: #ffaa00; }
+        .endpoint-item.delete { border-left-color: #ff3300; }
+
+        .method {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            padding: 0.4rem 1.2rem;
+            border-radius: 6px;
+            margin-right: 1rem;
+            font-size: 0.9rem;
+            letter-spacing: 1.5px;
+            border: 1px solid;
+        }
+
+        .post-m { background: rgba(0, 255, 136, 0.15); color: #00ff88; border-color: #00ff88; }
+        .get-m { background: rgba(0, 136, 255, 0.15); color: #0088ff; border-color: #0088ff; }
+        .put-m { background: rgba(255, 170, 0, 0.15); color: #ffaa00; border-color: #ffaa00; }
+        .delete-m { background: rgba(255, 51, 0, 0.15); color: #ff3300; border-color: #ff3300; }
+
+        .path {
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            color: var(--tron-orange);
+            font-weight: 600;
+            background: rgba(255, 122, 0, 0.05);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            display: inline-block;
+            margin: 0.5rem 0;
+            border: 1px solid rgba(255, 122, 0, 0.2);
+        }
+
+        .endpoint-item p {
+            margin-top: 0.8rem;
+            margin-bottom: 0.5rem;
+            color: #a0aec0;
+        }
+
+        .endpoint-item strong {
+            color: var(--tron-white);
+        }
+
+        code {
+            background: rgba(0, 0, 0, 0.6);
+            color: var(--tron-orange);
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 122, 0, 0.4);
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .market-card {
+            background: rgba(26, 35, 50, 0.8);
+            border: 1px solid var(--tron-blue);
+            border-radius: 10px;
+            padding: 1.8rem 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .market-card:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 15px 30px rgba(0, 243, 255, 0.3);
+            border-color: var(--tron-orange);
+        }
+
+        .market-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--tron-blue), var(--tron-orange));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .market-card:hover::after {
+            transform: scaleX(1);
+        }
+
+        .market-id {
+            font-size: 0.9rem;
+            color: var(--tron-blue);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .market-card h3 {
+            color: var(--tron-white);
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        .section-title {
+            color: var(--tron-blue);
+            border-bottom: 2px solid var(--tron-blue);
+            padding-bottom: 0.8rem;
+            margin-bottom: 1.8rem;
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: var(--tron-orange);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header TRON -->
+    <div class="tron-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="tron-title h2 mb-2">Bienvenido, {{ nombre }}</h1>
+                    <p class="tron-subtitle">Sistema de Gestión de Productos LFSH | ¡Lucho por los usuarios! </p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <a href="/logout" class="tron-btn">
+                        <i class="bi bi-power me-2"></i>Cerrar Sesión
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Sección API Key -->
+        <div class="tron-card">
+            <h2 class="tron-font section-title">TU CLAVE DE API</h2>
+            <p class="mb-3">Usa esta clave para autenticar todas tus solicitudes API en el Grid:</p>
+            <div class="api-key-display" id="apiKey">{{ api_key }}</div>
+            <button class="btn-copy-tron" onclick="copyApiKey()">
+                <i class="bi bi-clipboard me-2"></i>Copiar API Key
+            </button>
+            <p class="mt-4 mb-0" style="color: #a0aec0; font-size: 0.9rem;">
+                <i class="bi bi-info-circle me-1"></i>
+                Incluye esta clave en el header <code>X-API-Key</code> o como parámetro <code>?api_key=</code>
+            </p>
+        </div>
+
+        <!-- Endpoints -->
+        <h2 class="tron-font section-title mt-5">ENDPOINTS DISPONIBLES (PROTEGIDOS)</h2>
+        <p class="mb-4">Todas las rutas se acceden a través de la base <code>/api</code>.</p>
+
+        <div class="row">
+            <!-- POST Endpoint -->
+            <div class="col-lg-6 mb-4">
+                <div class="endpoint-item post">
+                    <div class="d-flex align-items-center mb-3">
+                        <span class="method post-m">POST</span>
+                        <span class="path">/api/productos</span>
+                    </div>
+                    <p><strong>Descripción:</strong> Insertar un nuevo producto (requiere idOrigen).</p>
+                    <p class="mb-2"><strong>JSON requerido:</strong></p>
+                    <code class="d-block mb-3 p-2">{"nombre": "Producto", "idOrigen": 1, "uMedida": "Kilo", "precio": 1000}</code>
+                    <p class="mb-0"><strong>Retorno:</strong> JSON con el producto creado (código 201).</p>
+                </div>
+            </div>
+
+            <!-- GET Endpoint -->
+            <div class="col-lg-6 mb-4">
+                <div class="endpoint-item get">
+                    <div class="d-flex align-items-center mb-3">
+                        <span class="method get-m">GET</span>
+                        <span class="path">/api/productos</span>
+                    </div>
+                    <p><strong>Descripción:</strong> Listar todos los productos con el nombre de su mercado.</p>
+                    <p><strong>Parámetros opcionales:</strong> <code>?page=1&per_page=10</code></p>
+                    <p class="mb-0"><strong>Retorno:</strong> JSON con lista de productos y metadatos de paginación.</p>
+                </div>
+            </div>
+
+            <!-- PUT Endpoint -->
+            <div class="col-lg-6 mb-4">
+                <div class="endpoint-item put">
+                    <div class="d-flex align-items-center mb-3">
+                        <span class="method put-m">PUT</span>
+                        <span class="path">/api/productos/&lt;id&gt;</span>
+                    </div>
+                    <p><strong>Descripción:</strong> Editar un producto por ID.</p>
+                    <p><strong>Campos opcionales:</strong> <code>nombre</code>, <code>idOrigen</code>, <code>uMedida</code>, <code>precio</code></p>
+                    <p class="mb-0"><strong>Retorno:</strong> JSON del producto actualizado.</p>
+                </div>
+            </div>
+
+            <!-- DELETE Endpoint -->
+            <div class="col-lg-6 mb-4">
+                <div class="endpoint-item delete">
+                    <div class="d-flex align-items-center mb-3">
+                        <span class="method delete-m">DELETE</span>
+                        <span class="path">/api/productos/&lt;id&gt;</span>
+                    </div>
+                    <p><strong>Descripción:</strong> Eliminar un producto por ID.</p>
+                    <p class="mb-0"><strong>Retorno:</strong> JSON de confirmación.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mercados Disponibles -->
+        <div class="mt-5 pt-4">
+            <h2 class="tron-font section-title">MERCADOS DISPONIBLES</h2>
+            <p class="mb-4">IDs de referencia para el campo <code>idOrigen</code> en el Grid:</p>
+
+            <div class="row g-4">
+                <div class="col-md-4 col-sm-6">
+                    <div class="market-card">
+                        <div class="market-id">ID: 1</div>
+                        <h3>Rancagua</h3>
+                        <div class="mt-3">
+                            <span class="badge bg-dark border border-tron-blue">Sector Central</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6">
+                    <div class="market-card">
+                        <div class="market-id">ID: 2</div>
+                        <h3>Talca</h3>
+                        <div class="mt-3">
+                            <span class="badge bg-dark border border-tron-blue">Sector Centro</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6">
+                    <div class="market-card">
+                        <div class="market-id">ID: 3</div>
+                        <h3>Chillan</h3>
+                        <div class="mt-3">
+                            <span class="badge bg-dark border border-tron-blue">Sector Sur</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6">
+                    <div class="market-card">
+                        <div class="market-id">ID: 4</div>
+                        <h3>Temuco</h3>
+                        <div class="mt-3">
+                            <span class="badge bg-dark border border-tron-blue">Sector Sur</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6">
+                    <div class="market-card">
+                        <div class="market-id">ID: 5</div>
+                        <h3>Osorno</h3>
+                        <div class="mt-3">
+                            <span class="badge bg-dark border border-tron-blue">Sector Extremo Sur</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6">
+                    <div class="market-card">
+                        <div class="market-id">ID: 6</div>
+                        <h3>Puerto Montt</h3>
+                        <div class="mt-3">
+                            <span class="badge bg-dark border border-tron-blue">Sector Extremo Sur</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="mt-5 pt-4 border-top border-tron-blue text-center">
+            <p class="text-muted">
+                <i class="bi bi-cpu me-1"></i>Sistema LFSH Grid v2.0 | TRON Legacy Interface
+            </p>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        function copyApiKey() {
+            const apiKey = document.getElementById('apiKey').textContent;
+            navigator.clipboard.writeText(apiKey).then(() => {
+                const btn = document.querySelector('.btn-copy-tron');
+                const original = btn.innerHTML;
+                btn.innerHTML = '<i class="bi bi-check-circle me-2"></i>Copiado al Grid';
+                btn.classList.add('bg-success');
+                setTimeout(() => {
+                    btn.innerHTML = original;
+                    btn.classList.remove('bg-success');
+                }, 2000);
+            });
+        }
+
+        // Efecto de parpadeo aleatorio en elementos
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.market-card, .endpoint-item');
+            cards.forEach(card => {
+                setInterval(() => {
+                    if (Math.random() > 0.7) {
+                        card.style.boxShadow = '0 0 20px rgba(0, 243, 255, 0.5)';
+                        setTimeout(() => {
+                            card.style.boxShadow = '';
+                        }, 300);
+                    }
+                }, 2000);
+            });
+        });
+    </script>
+</body>
+</html>

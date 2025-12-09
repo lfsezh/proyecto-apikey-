@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>LFSH - Sistema de Gestión | TRON Grid</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <!-- Fuentes TRON -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        :root {
+            --tron-blue: #00f3ff;
+            --tron-orange: #ff7a00;
+            --tron-white: #ffffff;
+            --tron-dark: #0a0a1a;
+            --tron-grid: #003344;
+            --tron-gray: #1a2332;
+        }
+
+        body {
+            background-color: var(--tron-dark);
+            background-image:
+                linear-gradient(rgba(0, 243, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
+            background-size: 60px 60px;
+            color: var(--tron-white);
+            font-family: 'Rajdhani', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 50%, rgba(0, 51, 68, 0.5) 0%, transparent 50%),
+                       radial-gradient(circle at 70% 20%, rgba(255, 122, 0, 0.25) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .tron-login-box {
+            background: rgba(10, 10, 26, 0.9);
+            border: 2px solid var(--tron-blue);
+            border-radius: 15px;
+            width: 100%;
+            max-width: 480px;
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(0, 243, 255, 0.4),
+                        inset 0 0 20px rgba(0, 243, 255, 0.1);
+            backdrop-filter: blur(10px);
+            position: relative;
+            animation: pulse 4s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 50px rgba(0, 243, 255, 0.4), inset 0 0 20px rgba(0, 243, 255, 0.1); }
+            100% { box-shadow: 0 0 60px rgba(0, 243, 255, 0.6), inset 0 0 25px rgba(0, 243, 255, 0.15); }
+        }
+
+        .tron-login-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--tron-blue), transparent);
+            animation: scan 3s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .tron-login-header {
+            background: linear-gradient(90deg, rgba(0, 51, 68, 0.8), rgba(0, 102, 136, 0.8));
+            color: var(--tron-blue);
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 1px solid var(--tron-blue);
+            text-shadow: 0 0 15px rgba(0, 243, 255, 0.8);
+        }
+
+        .tron-login-title {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 1.8rem;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+        }
+
+        .tron-login-subtitle {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1rem;
+            letter-spacing: 1px;
+        }
+
+        .tron-form-container {
+            padding: 2.5rem;
+        }
+
+        .form-label {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--tron-blue);
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .tron-form-control {
+            background: rgba(26, 35, 50, 0.8);
+            border: 1px solid var(--tron-blue);
+            border-radius: 8px;
+            color: var(--tron-white);
+            padding: 0.9rem 1.2rem;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .tron-form-control:focus {
+            background: rgba(10, 10, 26, 0.9);
+            border-color: var(--tron-orange);
+            box-shadow: 0 0 15px rgba(255, 122, 0, 0.5);
+            color: var(--tron-white);
+            outline: none;
+        }
+
+        .tron-form-control::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .captcha-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .captcha-display {
+            flex: 1;
+            background: linear-gradient(45deg, rgba(0, 51, 68, 0.8), rgba(0, 102, 136, 0.8));
+            color: var(--tron-blue);
+            padding: 1rem;
+            text-align: center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: bold;
+            letter-spacing: 3px;
+            border-radius: 8px;
+            border: 1px solid var(--tron-blue);
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.7);
+        }
+
+        .captcha-refresh {
+            background: rgba(0, 51, 68, 0.8);
+            color: var(--tron-blue);
+            border: 1px solid var(--tron-blue);
+            width: 55px;
+            height: 55px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .captcha-refresh:hover {
+            background: var(--tron-blue);
+            color: var(--tron-dark);
+            transform: rotate(180deg);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.6);
+        }
+
+        .tron-submit-btn {
+            width: 100%;
+            background: linear-gradient(45deg, rgba(0, 51, 68, 0.9), rgba(0, 102, 136, 0.9));
+            color: var(--tron-white);
+            border: 1px solid var(--tron-blue);
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            margin-top: 1rem;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+        }
+
+        .tron-submit-btn:hover {
+            background: linear-gradient(45deg, var(--tron-blue), #00ccff);
+            color: var(--tron-dark);
+            border-color: var(--tron-white);
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.7);
+            transform: translateY(-3px);
+        }
+
+        .alert-tron {
+            background: rgba(255, 122, 0, 0.15);
+            border: 1px solid var(--tron-orange);
+            color: var(--tron-orange);
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            text-align: center;
+            text-shadow: 0 0 5px rgba(255, 122, 0, 0.5);
+            box-shadow: 0 0 15px rgba(255, 122, 0, 0.2);
+        }
+
+        .grid-lines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        .grid-line {
+            position: absolute;
+            background: var(--tron-blue);
+        }
+
+        .grid-line.horizontal {
+            width: 100%;
+            height: 1px;
+            animation: moveHorizontal 20s linear infinite;
+        }
+
+        .grid-line.vertical {
+            width: 1px;
+            height: 100%;
+            animation: moveVertical 15s linear infinite;
+        }
+
+        @keyframes moveHorizontal {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(100vh); }
+        }
+
+        @keyframes moveVertical {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(100vw); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Líneas de fondo estilo grid -->
+    <div class="grid-lines">
+        <div class="grid-line horizontal" style="top: 20%;"></div>
+        <div class="grid-line horizontal" style="top: 40%;"></div>
+        <div class="grid-line horizontal" style="top: 60%;"></div>
+        <div class="grid-line horizontal" style="top: 80%;"></div>
+        <div class="grid-line vertical" style="left: 20%;"></div>
+        <div class="grid-line vertical" style="left: 40%;"></div>
+        <div class="grid-line vertical" style="left: 60%;"></div>
+        <div class="grid-line vertical" style="left: 80%;"></div>
+    </div>
+
+    <div class="tron-login-box">
+        <div class="tron-login-header">
+            <h1 class="tron-login-title">SISTEMA LFSH BIENVENIDO AL ROOT </h1>
+            <p class="tron-login-subtitle">ACCESO AL PROGRAMA DE INACAP</p>
+        </div>
+
+        <div class="tron-form-container">
+            {% if message %}
+                <div class="alert-tron">
+                    <i class="bi bi-exclamation-triangle me-2"></i>{{ message }}
+                </div>
+            {% endif %}
+
+            <form method="post" action="/login">
+                <div class="mb-4">
+                    <label for="username" class="form-label">Usuario</label>
+                    <input type="text" id="username" name="username" class="form-control tron-form-control" required
+                           placeholder="Ingrese su identidad de usuario" autocomplete="off">
+                </div>
+
+                <div class="mb-4">
+                    <label for="password" class="form-label">Contraseña</label>
+                    <input type="password" id="password" name="password" class="form-control tron-form-control" required
+                           placeholder="Ingrese su clave de acceso">
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Código de Verificación del Grid</label>
+                    <div class="captcha-container">
+                        <div class="captcha-display">{{ captcha }}</div>
+                        <button type="button" class="captcha-refresh" onclick="location.reload()">
+                            <i class="bi bi-arrow-clockwise"></i>
+                        </button>
+                    </div>
+                    <input type="text" name="captcha" class="form-control tron-form-control mt-3" required
+                           placeholder="Ingrese el código de verificación" autocomplete="off"
+                           oninput="this.value = this.value.toUpperCase()">
+                    <small class="text-muted mt-2 d-block">Código sensible a mayúsculas</small>
+                </div>
+
+                <button type="submit" class="tron-submit-btn">
+                    <i class="bi bi-door-open me-2"></i>ACCEDER AL JUEGO
+                </button>
+            </form>
+
+            <div class="mt-4 text-center">
+                <small class="text-muted">
+                    <i class="bi bi-shield-lock me-1"></i>Sistema Seguro - Todos los intentos son registrados
+                </small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Efecto de parpadeo en el título
+        const title = document.querySelector('.tron-login-title');
+        setInterval(() => {
+            if (Math.random() > 0.5) {
+                title.style.textShadow = '0 0 20px rgba(0, 243, 255, 1)';
+                setTimeout(() => {
+                    title.style.textShadow = '0 0 15px rgba(0, 243, 255, 0.8)';
+                }, 200);
+            }
+        }, 1000);
+
+        // Efecto de foco en inputs
+        const inputs = document.querySelectorAll('.tron-form-control');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'translateY(-2px)';
+            });
+
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>
